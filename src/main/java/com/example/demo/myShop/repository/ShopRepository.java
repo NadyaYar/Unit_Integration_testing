@@ -1,7 +1,7 @@
 package com.example.demo.myShop.repository;
 
 import com.example.demo.myShop.model.Shop;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ShopRepository extends CrudRepository<Shop, Long> {
+public interface ShopRepository extends JpaRepository<Shop, Long> {
 }

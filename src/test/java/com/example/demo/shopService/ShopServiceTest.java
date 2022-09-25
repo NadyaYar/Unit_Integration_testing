@@ -5,6 +5,7 @@ import com.example.demo.myShop.exception.ShopNotFoundException;
 import com.example.demo.myShop.model.Shop;
 import com.example.demo.myShop.repository.ShopRepository;
 import com.example.demo.myShop.service.ShopService;
+import com.example.demo.shopForTest.ShopForTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,30 +29,29 @@ public class ShopServiceTest {
 
     @Test
     void saveTest() throws ShopExistException {
-        Shop shop = new Shop("Lviv", "d1", "Product", 13, true);
-        when(shopRepository.save(shop)).thenReturn(shop);
+        when(shopRepository.save(ShopForTest.shopForTest())).thenReturn(ShopForTest.shopForTest());
 
-        Shop shopSave = shopService.createShop(shop);
+        Shop actualShop = shopService.createShop(ShopForTest.shopForTest());
 
-        assertEquals(shopSave.getId(), shop.getId());
+        assertEquals(actualShop.getId(), ShopForTest.shopForTest().getId());
     }
 
     @Test
     void getShopByIdTest() throws ShopNotFoundException {
-        Shop shop = new Shop("Lviv", "d1", "Product", 13, true);
+
         long shopId = 3L;
-        shop.setId(shopId);
+        ShopForTest.shopForTest().setId(shopId);
 
-        when(shopRepository.existsById(shop.getId())).thenReturn(true);
-        when(shopRepository.findById(shopId)).thenReturn(Optional.of(shop));
+        when(shopRepository.existsById(ShopForTest.shopForTest().getId())).thenReturn(true);
+        when(shopRepository.findById(shopId)).thenReturn(Optional.of(ShopForTest.shopForTest()));
 
-        Shop shopFind = shopService.findById(shopId);
+        Shop actualShop = shopService.findById(shopId);
 
-        assertEquals("Product", shopFind.getName());
-        assertEquals(13, shopFind.getNumberOfStaff());
-        assertEquals(true, shopFind.getIsHasSite());
-        assertEquals("Lviv", shopFind.getCity());
-        assertEquals("d1", shopFind.getStreet());
+        assertEquals("Product", actualShop.getName());
+        assertEquals(13, actualShop.getNumberOfStaff());
+        assertEquals(true, actualShop.getIsHasSite());
+        assertEquals("Lviv", actualShop.getCity());
+        assertEquals("d1", actualShop.getStreet());
     }
 
     @Test
@@ -62,51 +62,39 @@ public class ShopServiceTest {
         Shop shop3 = new Shop("Odessa", "b1", "Device", 5, true);
         Shop shop4 = new Shop("Odessa", "b1", "Device", 5, true);
 
-        List<Shop> shops = new ArrayList<>(Arrays.asList(shop, shop1, shop2, shop3, shop4));
+        List<Shop> expectedShopList = new ArrayList<>(Arrays.asList(shop, shop1, shop2, shop3, shop4));
 
-        when(shopRepository.findAll()).thenReturn(shops);
+        when(shopRepository.findAll()).thenReturn(expectedShopList);
 
-        List<Shop> shopList = (List<Shop>) shopService.getShops();
-        assertEquals(5, shopList.size());
+        List<Shop> actualShopList = (List<Shop>) shopService.getShops();
+        assertEquals(expectedShopList.size(), actualShopList.size());
     }
 
     @Test
     void updateShopTest() throws ShopNotFoundException {
-        Shop shop = new Shop("Lviv", "d1", "Product", 13, true);
         long shopId = 3L;
-        shop.setId(shopId);
-        when(shopRepository.existsById(shop.getId())).thenReturn(true);
-        when(shopRepository.findById(shopId)).thenReturn(Optional.of(shop));
+        ShopForTest.shopForTest().setId(shopId);
+        when(shopRepository.existsById(ShopForTest.shopForTest().getId())).thenReturn(true);
+        when(shopRepository.findById(shopId)).thenReturn(Optional.of(ShopForTest.shopForTest()));
 
-        Shop shopToUpdate = shopService.update(shop, shopId);
+        Shop actualShop = shopService.update(ShopForTest.shopForTest(), shopId);
 
-        assertEquals(shopToUpdate.getName(), shop.getName());
+        assertEquals(actualShop.getName(), ShopForTest.shopForTest().getName());
     }
 
     @Test
     void deleteTest() throws ShopNotFoundException {
-        Shop shop = new Shop("Lviv", "d1", "Product", 13, true);
         long shopId = 3L;
-        shop.setId(shopId);
-        when(shopRepository.existsById(shop.getId())).thenReturn(true);
+        ShopForTest.shopForTest().setId(shopId);
+        when(shopRepository.existsById(ShopForTest.shopForTest().getId())).thenReturn(true);
 
-        Shop shopDel = shopService.delete(shopId);
-        assertThat(shopDel).isNull();
-    }
-
-    @Test
-    void shopExistExceptionTest() throws ShopExistException {
-        Throwable exception = assertThrows(ShopExistException.class, () -> {
-            throw new ShopExistException("Shop already exist");
-        });
-
-        assertEquals("Shop already exist", exception.getMessage());
+        Shop actualShop = shopService.delete(shopId);
+        assertThat(actualShop).isNull();
     }
 
     @Test
     void shopNotFoundExceptionTest() {
-        Shop shop = new Shop("Lviv", "d1", "Product", 13, true);
-        shop.setId(0L);
+        ShopForTest.shopForTest().setId(0L);
 
         assertThrows(ShopNotFoundException.class, () -> shopService.isExists(5L));
     }
