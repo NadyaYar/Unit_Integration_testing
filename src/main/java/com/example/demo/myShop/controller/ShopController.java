@@ -36,8 +36,8 @@ public class ShopController {
         shopService.delete(id);
     }
 
-    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Shop updateShop(@RequestBody Shop shop, Long id) throws ShopNotFoundException {
+    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Shop updateShop(@RequestBody Shop shop, @PathVariable Long id) throws ShopNotFoundException {
         return shopService.update(shop, id);
     }
 }
