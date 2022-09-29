@@ -104,7 +104,7 @@ public class ShopControllerTest {
 
         when(shopService.delete(ShopForTest.shopForTest().getId())).thenReturn(ShopForTest.shopForTest());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/delete/77")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/delete/0")
                         .content(new ObjectMapper().writeValueAsString(ShopForTest.shopForTest()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
