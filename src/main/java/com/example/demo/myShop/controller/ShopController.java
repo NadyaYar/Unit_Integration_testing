@@ -17,17 +17,17 @@ public class ShopController {
     @SneakyThrows
     @PostMapping(value = "/createShop")
     public Shop createShop(@RequestBody Shop shop) {
-        return shopService.createShop(shop);
+        return shopService.save(shop);
     }
 
     @SneakyThrows
     @GetMapping(value = "/getAllShops")
     public void getShops() {
-    shopService.getShops();
+    shopService.findAllShops();
     }
 
     @GetMapping("/findById/{id}")
-    public Shop findShopById(@PathVariable("id") long id) throws ShopNotFoundException {
+    public Shop getShopById(@PathVariable("id") long id) throws ShopNotFoundException {
         return shopService.findById(id);
     }
 

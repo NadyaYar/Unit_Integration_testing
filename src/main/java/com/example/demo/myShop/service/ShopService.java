@@ -13,7 +13,7 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
 
-    public Shop createShop(Shop shop) throws ShopExistException {
+    public Shop save(Shop shop) throws ShopExistException {
         if (shopRepository.existsById(shop.getId())) {
             throw new ShopExistException("Shop with id: " + shop.getId() + " already exist");
         }
@@ -31,7 +31,7 @@ public class ShopService {
         return null;
     }
 
-    public Iterable<Shop> getShops() {
+    public Iterable<Shop> findAllShops() {
         return shopRepository.findAll();
     }
 

@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -44,9 +46,9 @@ public class ShopControllerTest {
 
         List<Shop> expectedShopList = new ArrayList<>(Arrays.asList(shop, shop1, shop2));
 
-        when(shopService.getShops()).thenReturn(expectedShopList);
+        when(shopService.findAllShops()).thenReturn(expectedShopList);
 
-        List<Shop> actualShopList = (List<Shop>) shopService.getShops();
+        List<Shop> actualShopList = (List<Shop>) shopService.findAllShops();
         assertEquals(expectedShopList.size(), actualShopList.size());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/getAllShops"))
@@ -67,28 +69,34 @@ public class ShopControllerTest {
 
     @Test
     void saveShopTest() throws Exception {
-        when(shopService.createShop(ShopForTest.shopForTest())).thenReturn(ShopForTest.shopForTest());
+        when(shopService.save(any(Shop.class))).thenReturn(ShopForTest.shopForTest());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/createShop")
                         .content(new ObjectMapper().writeValueAsString(ShopForTest.shopForTest()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(ShopForTest.shopForTest().getId()))
+                .andDo(print());
     }
 
     @Test
     void updateShopTest() throws Exception {
-
+        long id = 1L;
         Shop updatedShop = new Shop();
-        updatedShop.setId(1L);
-        ShopForTest.shopForTest().setId(updatedShop.getId());
+        updatedShop.setId(id);
+        updatedShop.setName("Product");
 
-        when(shopService.update(ShopForTest.shopForTest(), updatedShop.getId())).thenReturn(ShopForTest.shopForTest());
+        ShopForTest.shopForTest().setId(id);
 
-        mockMvc.perform(put("/update/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
+        when(shopService.update(any(Shop.class), eq(updatedShop.getId()))).thenReturn(ShopForTest.shopForTest());
+
+        mockMvc.perform(put("/update/{id}", 1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updatedShop)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(updatedShop.getName()))
                 .andDo(print());
+
+
     }
 
     @Test
@@ -99,8 +107,8 @@ public class ShopControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/delete/77")
                         .content(new ObjectMapper().writeValueAsString(ShopForTest.shopForTest()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-//        .andExpect(jsonPath())
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
 }

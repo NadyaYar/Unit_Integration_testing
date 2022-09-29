@@ -31,7 +31,7 @@ public class ShopServiceTest {
     void saveTest() throws ShopExistException {
         when(shopRepository.save(ShopForTest.shopForTest())).thenReturn(ShopForTest.shopForTest());
 
-        Shop actualShop = shopService.createShop(ShopForTest.shopForTest());
+        Shop actualShop = shopService.save(ShopForTest.shopForTest());
 
         assertEquals(actualShop.getId(), ShopForTest.shopForTest().getId());
     }
@@ -66,7 +66,7 @@ public class ShopServiceTest {
 
         when(shopRepository.findAll()).thenReturn(expectedShopList);
 
-        List<Shop> actualShopList = (List<Shop>) shopService.getShops();
+        List<Shop> actualShopList = (List<Shop>) shopService.findAllShops();
         assertEquals(expectedShopList.size(), actualShopList.size());
     }
 
