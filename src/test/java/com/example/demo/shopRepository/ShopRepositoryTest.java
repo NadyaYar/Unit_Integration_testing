@@ -4,6 +4,7 @@ import com.example.demo.myShop.model.Shop;
 import com.example.demo.myShop.repository.ShopRepository;
 import com.example.demo.shopForTest.ShopForTest;
 
+import static com.example.demo.shopForTest.ShopForTest.shopForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -30,17 +32,15 @@ class ShopRepositoryTest {
 
     @Test
     void saveShopTest() {
+        Shop shop = new Shop("London", "fwe", "something", 12, true);
+        entityManager.persistAndFlush(shop);
 
-        entityManager.persist(ShopForTest.shopForTest());
-        entityManager.flush();
-
-        assertThat(shopRepository.findById(ShopForTest.shopForTest().getId())
-                .get()).isEqualTo(ShopForTest.shopForTest());
+        assertEquals(shopRepository.findById(shop.getId()), Optional.of(shop));
     }
 
     @Test
     void findAllShopsTest() {
-        shopRepository.save(ShopForTest.shopForTest());
+        shopRepository.save(shopForTest());
         List<Shop> shopsResult = new ArrayList<>(shopRepository.findAll());
         assertEquals(shopsResult.size(), 1);
     }

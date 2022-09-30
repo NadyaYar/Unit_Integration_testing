@@ -4,7 +4,6 @@ import com.example.demo.myShop.controller.ShopController;
 import com.example.demo.myShop.model.Shop;
 import com.example.demo.myShop.service.ShopService;
 
-import com.example.demo.shopForTest.ShopForTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.demo.shopForTest.ShopForTest.shopForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -58,37 +58,32 @@ public class ShopControllerTest {
 
     @Test
     void getShopByIdTest() throws Exception {
-        long shopId = 1L;
-        ShopForTest.shopForTest().setId(shopId);
-        when(shopService.findById(shopId)).thenReturn(ShopForTest.shopForTest());
+        when(shopService.findById(1L)).thenReturn(shopForTest());
         mockMvc.perform(MockMvcRequestBuilders.get("/findById/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(ShopForTest.shopForTest().getName()));
+                .andExpect(jsonPath("$.name").value(shopForTest().getName()));
     }
 
     @Test
     void saveShopTest() throws Exception {
-        when(shopService.save(any(Shop.class))).thenReturn(ShopForTest.shopForTest());
+        when(shopService.save(any(Shop.class))).thenReturn(shopForTest());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/createShop")
-                        .content(new ObjectMapper().writeValueAsString(ShopForTest.shopForTest()))
+                        .content(new ObjectMapper().writeValueAsString(shopForTest()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(ShopForTest.shopForTest().getId()))
+                .andExpect(jsonPath("$.id").value(shopForTest().getId()))
                 .andDo(print());
     }
 
     @Test
     void updateShopTest() throws Exception {
-        long id = 1L;
         Shop updatedShop = new Shop();
-        updatedShop.setId(id);
+        updatedShop.setId(shopForTest().getId());
         updatedShop.setName("Product");
 
-        ShopForTest.shopForTest().setId(id);
-
-        when(shopService.update(any(Shop.class), eq(updatedShop.getId()))).thenReturn(ShopForTest.shopForTest());
+        when(shopService.update(any(Shop.class), eq(updatedShop.getId()))).thenReturn(shopForTest());
 
         mockMvc.perform(put("/update/{id}", 1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updatedShop)))
@@ -101,11 +96,10 @@ public class ShopControllerTest {
 
     @Test
     void deleteShopTest() throws Exception {
+        when(shopService.delete(shopForTest().getId())).thenReturn(shopForTest());
 
-        when(shopService.delete(ShopForTest.shopForTest().getId())).thenReturn(ShopForTest.shopForTest());
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/delete/0")
-                        .content(new ObjectMapper().writeValueAsString(ShopForTest.shopForTest()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/delete/{id}", 1)
+                        .content(new ObjectMapper().writeValueAsString(shopForTest()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
